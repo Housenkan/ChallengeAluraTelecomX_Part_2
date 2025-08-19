@@ -140,21 +140,87 @@ Varíaveis que aumentam as chances de evasão:
 
 Varíaveis que diminuem as chances de evasão:
 
-* tenure (-0.352): A duração do tempo como cliente (tenure) tem uma correlação negativa forte com a evasão. Isso é esperado, pois clientes que estão há mais tempo tendem a ser mais leais.
+* tenure (-0.352): A duração do tempo como cliente (tenure) tem uma correlação negativa forte com a evasão. Isso é esperado, pois clientes que estão há mais tempo tendem a ser mais leais. Abaixo temos o gráfico box plot, em que temos a seguinte análise:
+    * Comparação das Medianas: A linha central (mediana) na caixa para clientes que Não Evadiram (0) está em um valor de "tenure" consideravelmente maior do que a linha central na caixa para clientes que Evadiram (1). Isso sugere que a metade dos clientes que não evadiram tem um tempo de permanência maior do que a metade dos clientes que evadiram.
+    * Distribuição Geral: A caixa e os "bigodes" (whiskers) para a classe "Não Evadiu (0)" estão localizados em valores de "tenure" mais altos no geral. Isso indica que a maioria dos clientes de longo prazo tende a não evadir.
+Clientes que Evadiram (1): A caixa para clientes que Evadiram (1) está concentrada em valores de "tenure" mais baixos. Isso significa que a maioria dos clientes que evadem o fazem relativamente cedo em seu relacionamento com a empresa.
+
+<img width="686" height="547" alt="image" src="https://github.com/user-attachments/assets/f3484cb3-7fef-42b1-8021-2d9713b5c559" />
+    
+    O box plot visualmente confirma a forte correlação negativa que vimos na matriz de correlação. Clientes com um tempo de permanência (tenure) mais longo têm uma probabilidade menor de evadir, enquanto clientes com "tenure" curto são mais propensos ao churn. Esta variável é claramente um fator importante na previsão da evasão de clientes.
+ 
 * Two year (-0.302): Clientes com contrato de dois anos apresentam uma correlação negativa forte com a evasão. Contratos de longo prazo indicam um compromisso maior e menor probabilidade de sair.
 * NoInternetService (-0.228): Clientes sem serviço de internet têm uma correlação negativa moderada com a evasão, o que faz sentido, pois a falta do serviço de internet remove um possível ponto de atrito que leva à evasão.
 *OnlineSecurity (-0.171) e TechSupport (-0.165): Clientes que usam segurança online e suporte técnico mostram correlações negativas moderadas com a evasão, sugerindo que esses serviços de valor agregado ajudam a reter clientes.
 
 Portanto as varíaveis mais importantes a princípio são:
 
-Month-to-month
-FiberOptic
-Eletronic check
-tenure
-Two year
-NoInternetService
-OnlineSecurity
-TechSupport
+* Month-to-month
+* FiberOptic
+* Eletronic check
+* tenure
+* Two year
+* NoInternetService
+* OnlineSecurity
+* TechSupport
+
+Agora vamos partir para os modelos:
+
+Eu escolhi a Regressão Logística e Support Vector Machine (SVM)
+
+A regressão logística é um bom ponto de partida para entender quais features são mais importantes na previsão de churn. Como já padronizamos os dados, a otimização do modelo será mais eficiente, enquanto os dados estão padronizados, o desempenho do SVM (que é sensível à escala) será otimizado. É uma boa opção para tentar capturar relações não lineares que a Regressão Logística pode não identificar.
+
+O código da Regressão Logística ficou:
+
+`logistic_model = LogisticRegression(random_state=42)
+logistic_model.fit(X_train_scaled, y_train)
+y_pred_logistic = logistic_model.predict(X_test_scaled)
+print("Avaliação do Modelo de Regressão Logística:")
+print("Acurácia:", accuracy_score(y_test, y_pred_logistic))
+print("\nMatriz de Confusão:\n", confusion_matrix(y_test, y_pred_logistic))
+print("\nRelatório de Classificação:\n", classification_report(y_test, y_pred_logistic))`
+
+Obteve as seguintes informações:
+
+Acurácia: 0.8403556242752223
+
+Matriz de Confusão:
+ [[1089  205]
+ [ 208 1085]]
+
+Relatório de Classificação:
+               precision    recall  f1-score   support
+           0       0.84      0.84      0.84      1294
+           1       0.84      0.84      0.84      1293
+    accuracy                           0.84      2587
+   macro avg       0.84      0.84      0.84      2587
+weighted avg       0.84      0.84      0.84      2587
+
+Enquanto o código Support Vector Machine(SVM) ficou:
+
+`svm_model = SVC(kernel='rbf', random_state=42)
+svm_model.fit(X_train_scaled, y_train)
+y_pred_svm = svm_model.predict(X_test_scaled)
+print("Avaliação do Modelo Support Vector Machine (SVM):")
+print("Acurácia:", accuracy_score(y_test, y_pred_svm))
+print("\nMatriz de Confusão:\n", confusion_matrix(y_test, y_pred_svm))
+print("\nRelatório de Classificação:\n", classification_report(y_test, y_pred_svm))`
+
+Obtive as seguintes informações:
+
+Acurácia: 0.8438345574023965
+
+Matriz de Confusão:
+ [[1108  186]
+ [ 218 1075]]
+
+Relatório de Classificação:
+               precision    recall  f1-score   support
+           0       0.84      0.86      0.85      1294
+           1       0.85      0.83      0.84      1293
+    accuracy                           0.84      2587
+   macro avg       0.84      0.84      0.84      2587
+weighted avg       0.84      0.84      0.84      2587
 
 
-
+Entre os dois modelos foi constatado que o modelo SVM teve um melhor desempenho, mesmo sendo pouca a diferença.
