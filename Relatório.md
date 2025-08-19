@@ -105,6 +105,8 @@ print("Forma de X_test_scaled:", X_test_scaled.shape)
 print("Forma de y_train:", y_train.shape)
 print("Forma de y_test:", y_test.shape)`
 
+A separação ficou em 25% para teste e 75% para treinamento do modelo
+
 Depois disso, a criação e exibição da matriz de correlação através de:
 
 `correlation_matrix = dados.corr()
@@ -117,10 +119,42 @@ sns.heatmap(correlation_matrix, annot=False, cmap='coolwarm', fmt=".2f")
 plt.title('Matriz de Correlação das Variáveis Numéricas')
 plt.show()`
 
+<img width="1233" height="947" alt="image" src="https://github.com/user-attachments/assets/b7ae2bbe-7abb-481c-b011-3ac419783835" />
+
+Com base no mapa assim podemos realizar algumas análises: 
+
+Varíaveis que aumentam as chances de evasão:
+
+* Month-to-month (0.405): Clientes com contrato mensal têm uma correlação positiva notável com a evasão. Isso sugere que contratos de curto prazo estão fortemente associados a uma maior probabilidade de sair. No gráfico abaixo podemos ver uma simples relação.
+
+<img width="704" height="547" alt="image" src="https://github.com/user-attachments/assets/e574393a-8e3f-45aa-b74c-d2ddde5509bf" />
+
+* FiberOptic (0.308): Clientes com serviço de internet fibra óptica também apresentam uma correlação considerável com a evasão. Isso pode indicar problemas de qualidade ou custo associados a esse serviço. Segue o gráfico para uma melhor compreensão.
+
+<img width="704" height="555" alt="image" src="https://github.com/user-attachments/assets/a54dd586-d98f-413f-a8a3-f236837e8fc8" />
+
+* Eletronic check (0.302): Clientes que usam cheque eletrônico como forma de pagamento mostram uma correlação com a evasão. Isso pode estar relacionado a problemas com o processo de pagamento ou a um perfil de cliente mais propenso a evasão que prefere essa forma de pagamento. O gráfico abaixo em barra estacada demostra o que foi analisado.
+
+<img width="704" height="549" alt="image" src="https://github.com/user-attachments/assets/11d79cb9-1bc8-4502-b0e3-41e106db3477" />
 
 
+Varíaveis que diminuem as chances de evasão:
 
+* tenure (-0.352): A duração do tempo como cliente (tenure) tem uma correlação negativa forte com a evasão. Isso é esperado, pois clientes que estão há mais tempo tendem a ser mais leais.
+* Two year (-0.302): Clientes com contrato de dois anos apresentam uma correlação negativa forte com a evasão. Contratos de longo prazo indicam um compromisso maior e menor probabilidade de sair.
+* NoInternetService (-0.228): Clientes sem serviço de internet têm uma correlação negativa moderada com a evasão, o que faz sentido, pois a falta do serviço de internet remove um possível ponto de atrito que leva à evasão.
+*OnlineSecurity (-0.171) e TechSupport (-0.165): Clientes que usam segurança online e suporte técnico mostram correlações negativas moderadas com a evasão, sugerindo que esses serviços de valor agregado ajudam a reter clientes.
 
+Portanto as varíaveis mais importantes a princípio são:
+
+Month-to-month
+FiberOptic
+Eletronic check
+tenure
+Two year
+NoInternetService
+OnlineSecurity
+TechSupport
 
 
 
