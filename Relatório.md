@@ -70,30 +70,14 @@ Também pode ser observado que aproximadamente a cada 4(quatro) clientes 1(um) d
 Isso mostra que a perda de clientes está muito alta para os parâmetros da empresa.
 
 Foi feita a tentativa de aplicação de SMOTE, porém algumas colunas ainda tinham valores não númericos.
-Foi tratado com os seguintes códigos:
+Resumidamente o tratamento realizado foi:
 
-`dados['MultipleLines'] = dados['MultipleLines'].replace({'No phone service': 0, 'Yes': 1, 'No': 0})
-dados['MultipleLines'] = pd.to_numeric(dados['MultipleLines'])
-dados['InternetService'] = dados['InternetService'].replace({'No internet service': 0, 'DSL': 1, 'Fiber optic': 2})
-dados['InternetService'] = pd.to_numeric(dados['InternetService'])
-dados['OnlineSecurity'] = dados['OnlineSecurity'].replace({'No internet service': 0, 'No': 0, 'Yes': 1})
-dados['OnlineSecurity'] = pd.to_numeric(dados['OnlineSecurity'])
-dados['OnlineBackup'] = dados['OnlineBackup'].replace({'No internet service': 0, 'No': 0, 'Yes': 1})
-dados['OnlineBackup'] = pd.to_numeric(dados['OnlineBackup'])
-dados['DeviceProtection'] = dados['DeviceProtection'].replace({'No internet service': 0, 'No': 0, 'Yes': 1})
-dados['DeviceProtection'] = pd.to_numeric(dados['DeviceProtection'])
-dados['TechSupport'] = dados['TechSupport'].replace({'No internet service': 0, 'No': 0, 'Yes': 1})
-dados['TechSupport'] = pd.to_numeric(dados['TechSupport'])
-dados['StreamingTV'] = dados['StreamingTV'].replace({'No internet service': 0, 'No': 0, 'Yes': 1})
-dados['StreamingTV'] = pd.to_numeric(dados['StreamingTV'])
-dados['StreamingMovies'] = dados['StreamingMovies'].replace({'No internet service': 0, 'No': 0, 'Yes': 1})
-dados['StreamingMovies'] = pd.to_numeric(dados['StreamingMovies'])
-dados['Charges.Total'] = dados['Charges.Total'].replace(r'^\s*$', pd.NA, regex=True)
-dados['Charges.Total'] = pd.to_numeric(dados['Charges.Total'], errors='coerce')
-median_charges_total = dados['Charges.Total'].median()
-dados['Charges.Total'] = dados['Charges.Total'].fillna(median_charges_total)`
+* As colunas categóricas 'MultipleLines', 'InternetService', 'OnlineSecurity', 'OnlineBackup', 'DeviceProtection', 'TechSupport', 'StreamingTV' e 'StreamingMovies' foram convertidas com sucesso para representações numéricas (0s, 1s e 2s).
+* A coluna 'Charges.Total' foi convertida para um formato numérico, tratando strings vazias ao substituí-las por NaN e, em seguida, preenchendo esses valores ausentes com a mediana da coluna.
+* Após as etapas de limpeza e transformação de dados, todas as colunas no DataFrame foram confirmadas como sendo de tipos de dados numéricos (int64, float64 ou int32).
+* O SMOTE foi aplicado com sucesso ao conjunto de dados, equilibrando a distribuição da classe 'Churn' através da sobreamostragem da classe minoritária.
 
-Após o tratamento e feito uma varredura através da colunas para constatar que então todas estavam de acordo para aplicação do SMOTE, foi aplicado.
+SMOTE:
 
 `X = dados.drop('Churn', axis=1)
 y = dados['Churn']
@@ -108,7 +92,35 @@ Churn
 0	5174
 1	5174
 
-Fazendo assim as amostras estarem devidamente equilibradas e preparadas para o treinamento e implementação de modelos de machine learning 
+Fazendo assim as amostras estarem devidamente equilibradas.
+Foi realizada a padronização dos dados utilizando StandardScaler:
+
+`X_train, X_test, y_train, y_test = train_test_split(X_resampled, y_resampled, test_size=0.25, random_state=42, stratify=y_resampled)
+scaler = StandardScaler()
+X_train_scaled = scaler.fit_transform(X_train)
+X_test_scaled = scaler.transform(X_test)
+print("Dados de treino e teste divididos e features padronizadas.")
+print("Forma de X_train_scaled:", X_train_scaled.shape)
+print("Forma de X_test_scaled:", X_test_scaled.shape)
+print("Forma de y_train:", y_train.shape)
+print("Forma de y_test:", y_test.shape)`
+
+Depois disso, a criação e exibição da matriz de correlação através de:
+
+`correlation_matrix = dados.corr()
+display(correlation_matrix)`
+
+Em seguida da criação do mapa de calor das variáveis:
+
+`plt.figure(figsize=(15, 10))
+sns.heatmap(correlation_matrix, annot=False, cmap='coolwarm', fmt=".2f")
+plt.title('Matriz de Correlação das Variáveis Numéricas')
+plt.show()`
+
+
+
+
+
 
 
 
