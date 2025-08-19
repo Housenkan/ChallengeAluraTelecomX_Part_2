@@ -9,6 +9,8 @@ Utilizando os dados tratados do desafio anterior, foi feito o upload do arquivo 
 Em seguida foi feito a importação das bibliotecas, ajuste no aumento da visualização das colunas e a leitura do arquivo:
 
 `import pandas as pd
+from imblearn.over_sampling import SMOTE
+from sklearn.model_selection import train_test_split
 pd.set_option('display.max_columns', None)
 dados = pd.read_csv('dados_tratados.csv')`
 
@@ -61,8 +63,52 @@ else:
 
 Foi constatado que não há nenhum desiquilíbrio significativo permitindo assim a continuação do projeto.
 
+Proporção de clientes que evadiram (Churn): 26.54%
+Proporção de clientes que permaneceram ativos: 73.46%
 
+Também pode ser observado que aproximadamente a cada 4(quatro) clientes 1(um) deles é evasão.
+Isso mostra que a perda de clientes está muito alta para os parâmetros da empresa.
 
+Foi feita a tentativa de aplicação de SMOTE, porém algumas colunas ainda tinham valores não númericos.
+Foi tratado com os seguintes códigos:
+
+`dados['MultipleLines'] = dados['MultipleLines'].replace({'No phone service': 0, 'Yes': 1, 'No': 0})
+dados['MultipleLines'] = pd.to_numeric(dados['MultipleLines'])
+dados['InternetService'] = dados['InternetService'].replace({'No internet service': 0, 'DSL': 1, 'Fiber optic': 2})
+dados['InternetService'] = pd.to_numeric(dados['InternetService'])
+dados['OnlineSecurity'] = dados['OnlineSecurity'].replace({'No internet service': 0, 'No': 0, 'Yes': 1})
+dados['OnlineSecurity'] = pd.to_numeric(dados['OnlineSecurity'])
+dados['OnlineBackup'] = dados['OnlineBackup'].replace({'No internet service': 0, 'No': 0, 'Yes': 1})
+dados['OnlineBackup'] = pd.to_numeric(dados['OnlineBackup'])
+dados['DeviceProtection'] = dados['DeviceProtection'].replace({'No internet service': 0, 'No': 0, 'Yes': 1})
+dados['DeviceProtection'] = pd.to_numeric(dados['DeviceProtection'])
+dados['TechSupport'] = dados['TechSupport'].replace({'No internet service': 0, 'No': 0, 'Yes': 1})
+dados['TechSupport'] = pd.to_numeric(dados['TechSupport'])
+dados['StreamingTV'] = dados['StreamingTV'].replace({'No internet service': 0, 'No': 0, 'Yes': 1})
+dados['StreamingTV'] = pd.to_numeric(dados['StreamingTV'])
+dados['StreamingMovies'] = dados['StreamingMovies'].replace({'No internet service': 0, 'No': 0, 'Yes': 1})
+dados['StreamingMovies'] = pd.to_numeric(dados['StreamingMovies'])
+dados['Charges.Total'] = dados['Charges.Total'].replace(r'^\s*$', pd.NA, regex=True)
+dados['Charges.Total'] = pd.to_numeric(dados['Charges.Total'], errors='coerce')
+median_charges_total = dados['Charges.Total'].median()
+dados['Charges.Total'] = dados['Charges.Total'].fillna(median_charges_total)`
+
+Após o tratamento e feito uma varredura através da colunas para constatar que então todas estavam de acordo para aplicação do SMOTE, foi aplicado.
+
+`X = dados.drop('Churn', axis=1)
+y = dados['Churn']
+smote = SMOTE(random_state=42)
+X_resampled, y_resampled = smote.fit_resample(X, y)
+print("Nova distribuição da classe Churn após SMOTE:")
+display(y_resampled.value_counts())`
+
+A distribuição atualizada ficou: 
+
+Churn	
+0	5174
+1	5174
+
+Fazendo assim as amostras estarem devidamente equilibradas e preparadas para o treinamento e implementação de modelos de machine learning 
 
 
 
